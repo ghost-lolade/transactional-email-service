@@ -4,7 +4,7 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class EmailSentResource extends JsonResource
+class SendEmailResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -14,6 +14,11 @@ class EmailSentResource extends JsonResource
      */
     public function toArray($request): array
     {
-        return parent::toArray($request);
+        return [
+            'to' => $this->to,
+            'subject' => $this->subject,
+            'service' => $this->service,
+            'content' => $this->content
+        ];
     }
 }
