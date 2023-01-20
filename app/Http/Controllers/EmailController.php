@@ -12,6 +12,6 @@ class EmailController extends Controller
     {
         $response = $action->execute($request);
 
-        return new SendEmailResource($response);
+        return $this->createdResponse('This email has been queued successfully', $response);
     }
 }
