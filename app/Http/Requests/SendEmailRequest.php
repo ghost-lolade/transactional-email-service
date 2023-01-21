@@ -13,7 +13,7 @@ class SendEmailRequest extends FormRequest
      */
     public function authorize()
     {
-        return false;
+        return true;
     }
 
     /**
@@ -24,9 +24,9 @@ class SendEmailRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'to' => ['required', 'string|array'],
+            'to' => ['required', 'string'],
             'subject' => ['required', 'string'],
-            'messsage' => ['required']
+            'message' => ['required']
 
         ];
     }
