@@ -39,4 +39,9 @@ class SendEmail implements ShouldQueue
     {
         $this->service->send($this->data);
     }
+
+    public function failed()
+    {
+        dd('I am heere');
+    }
 }
