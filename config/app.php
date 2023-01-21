@@ -194,8 +194,6 @@ return [
         // App\Providers\BroadcastServiceProvider::class,
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
-        App\Interfaces\EmailInterfaces\MailJet::class,
-        App\Interfaces\EmailInterfaces\SendGrid::class,
 
     ],
 
