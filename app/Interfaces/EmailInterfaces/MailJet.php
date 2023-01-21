@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Interfaces\EmailInterface;
+namespace App\Interfaces\EmailInterfaces;
 
 use App\Interfaces\EmailInterfaces\Email;
 use Carbon\Carbon;
@@ -36,13 +36,6 @@ class MailJet implements Email
         try {
             $response = $mailJet->post(Resources::$Email, ['body' => $body]);
         } catch(Exception $e) {
-            /*
-             * if the default emails service is down
-             * for any reason,
-             * then throw an error
-             * that will be handled by the queued job
-             * which will trigger fallback service
-             */
             throw $e;
         }
     }

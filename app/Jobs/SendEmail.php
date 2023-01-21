@@ -8,6 +8,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use SebastianBergmann\Type\VoidType;
 
 class SendEmail implements ShouldQueue
 {
@@ -34,7 +35,7 @@ class SendEmail implements ShouldQueue
      *
      * @return void
      */
-    public function handle()
+    public function handle(): void
     {
         $this->service->send($this->data);
     }

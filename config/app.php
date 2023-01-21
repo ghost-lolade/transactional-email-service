@@ -194,7 +194,8 @@ return [
         // App\Providers\BroadcastServiceProvider::class,
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
-        App\Interfaces\EmailInterface\MailJet::class,
+        App\Interfaces\EmailInterfaces\MailJet::class,
+        App\Interfaces\EmailInterfaces\SendGrid::class,
 
     ],
 
@@ -210,7 +211,8 @@ return [
     */
 
     'aliases' => Facade::defaultAliases()->merge([
-        // 'ExampleClass' => App\Example\ExampleClass::class,
+        'MailJet' => App\Interfaces\EmailInterfaces\MailJet::class,
+        'SendGrid' => App\Interfaces\EmailInterfaces\SendGrid::class,
     ])->toArray(),
 
 ];
