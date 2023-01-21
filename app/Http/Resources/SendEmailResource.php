@@ -18,7 +18,9 @@ class SendEmailResource extends JsonResource
             'to' => $this->to,
             'subject' => $this->subject,
             'service' => $this->service,
-            'content' => $this->content
+            'html' => $this->message->html,
+            'text' => $this->message->text,
+            'markdown' => $this->message->markdown,
         ];
     }
 }
