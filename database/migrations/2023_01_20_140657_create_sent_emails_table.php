@@ -17,8 +17,10 @@ class CreateSentEmailsTable extends Migration
             $table->id();
             $table->string('to');
             $table->string('subject');
-            $table->text('content');
-            $table->string('service');
+            $table->text('text');
+            $table->text('html')->nullable();
+            $table->text('markdown')->nullable();
+            $table->string('service')->default('none');
             $table->timestamps();
         });
     }
