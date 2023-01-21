@@ -28,7 +28,7 @@ class MailJet implements Email
                     ],
                     'Subject' => $data['subject'],
                     'TextPart' => $data['message']['text'],
-                    'HTMLPart' => $data['message']['HTML']
+                    'HtmlPart' => $data['message']['html']
                 ]
             ]
 
