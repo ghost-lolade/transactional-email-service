@@ -2,6 +2,7 @@
 
 namespace App\Interfaces\EmailInterfaces;
 
+use App\Models\SentEmail;
 use Exception;
 use SendGrid as SendGrid;
 use SendGrid\Mail\Mail as SendGridMail;
@@ -29,8 +30,14 @@ class SendGridService implements Email
 
         try {
             $sendgrid->send($email);
+            $this->updateSentEmailTable($data['id']);
         } catch (Exception $e) {
             throw $e;
         }
+    }
+
+    public function updateSentEmailTable($id): void
+    {
+        SentEmail::where('id', $id)->update(['service'  => self::class]);
     }
 }
