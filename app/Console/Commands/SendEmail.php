@@ -53,7 +53,7 @@ class SendEmail extends Command
         $response = (new SendEmailAction)->execute($data);
 
         if($response->status == false){
-            $this->info("Something went wrong, Don\'t  worry i\'ts not your fault");
+            $this->info('Something went wrong, Don\'t worry i\'ts not your fault');
         }
 
         $this->info("Email has been sent to ${to}");
