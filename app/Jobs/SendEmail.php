@@ -42,20 +42,10 @@ class SendEmail implements ShouldQueue
     public function handle(): void
     {
         (new $this->service)->send($this->data);
-            // SentEmail::where('id', $this->data['id'])->update(['service'  => $this->service]);
-            Log::info("Sending mail to". $this->data['id'] .  "using" . $this->service);
-    }
 
-    // private function sendUsingFallback()
-    // {
-    //     $usedService = [];
-    //     foreach ($this->fallbacks as $fallback) {
-    //         if(!in_array($fallback, $usedService)) {
-    //             array_push($usedService, $fallback);
-    //             return $fallback;
-    //         }
-    //     }
-    // }
+        Log::info("Sending mail to". $this->data['id'] .  "using" . $this->service);
+
+    }
 
     public function failed()
     {
