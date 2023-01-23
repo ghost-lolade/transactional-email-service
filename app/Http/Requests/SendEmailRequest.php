@@ -26,9 +26,6 @@ class SendEmailRequest extends FormRequest
         return [
             'to' => ['required', 'email'],
             'subject' => ['required', 'string'],
-            'text_format' => ['required', 'boolean'],
-            'html_format' => ['required', 'boolean'],
-            'markdown_format' => ['required', 'boolean'],
             'message.text' => ['required_if:text_format,true'],
             'message.html' => ['required_if:html_format,true'],
             'message.markdown' => ['required_if:xml_format,true'],

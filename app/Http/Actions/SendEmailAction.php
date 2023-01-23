@@ -13,7 +13,7 @@ class SendEmailAction
 
         $request['id'] = $response->id;
 
-        dispatch(new SendEmail($request->all()));
+        dispatch(new SendEmail($request));
 
         return $response;
     }

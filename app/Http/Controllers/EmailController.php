@@ -11,7 +11,7 @@ class EmailController extends Controller
 {
     public function sendEmail(SendEmailRequest $request, SendEmailAction $action): JsonResponse
     {
-        $response = $action->execute($request);
+        $response = $action->execute($request->all());
 
         $response = new SendEmailResource($response);
 
