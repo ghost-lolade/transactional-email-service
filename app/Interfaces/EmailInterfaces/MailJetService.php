@@ -3,6 +3,7 @@
 namespace App\Interfaces\EmailInterfaces;
 
 use App\Interfaces\EmailInterfaces\Email;
+use App\Models\SentEmail;
 use Mailjet\Client;
 use Mailjet\LaravelMailjet\Contracts\CampaignDraftContract;
 use Exception;
@@ -32,8 +33,15 @@ class MailJetService implements Email
         ];
         try {
             $mailJet->post(Resources::$Email, ['body' => $params]);
+
+            $this->updateSentEmailTable($data['id']);
         } catch(Exception $e) {
             throw $e;
         }
+    }
+
+    public function updateSentEmailTable($id): void
+    {
+        SentEmail::where('id', $id)->update(['service'  => self::class]);
     }
 }
