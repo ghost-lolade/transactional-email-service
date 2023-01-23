@@ -118,13 +118,14 @@ return [
     /*
      * Default email service provider
      */
-    'service' => env('DEFAULT_EMAIL_SERVICE', 'MailJet'),
+    'service' => "App\Interfaces\EmailInterfaces\MailJetService",
 
     /*
      * Other fallback email service providers
      */
     'fallbacks' => [
-        'SendGrid'
+        'App\Interfaces\EmailInterfaces\SendGridService',
+        'App\Interfaces\EmailInterfaces\MailJetService',
     ],
 
 ];
