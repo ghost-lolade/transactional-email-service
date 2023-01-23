@@ -195,6 +195,10 @@ return [
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
 
+        Mailjet\LaravelMailjet\MailjetServiceProvider::class,
+        // Mailjet\LaravelMailjet\MailjetMailServiceProvider::class,
+        Mailjet\LaravelMailjet\Providers\CampaignDraftServiceProvider::class
+
     ],
 
     /*
@@ -209,8 +213,9 @@ return [
     */
 
     'aliases' => Facade::defaultAliases()->merge([
-        'MailJet' => App\Interfaces\EmailInterfaces\MailJet::class,
-        'SendGrid' => App\Interfaces\EmailInterfaces\SendGrid::class,
+        // 'MailJet' => App\Interfaces\EmailInterfaces\MailJet::class,
+        // 'SendGrid' => App\Interfaces\EmailInterfaces\SendGrid::class,
+        'Mailjet' => Mailjet\LaravelMailjet\Facades\Mailjet::class,
     ])->toArray(),
 
 ];

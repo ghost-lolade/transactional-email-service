@@ -9,10 +9,11 @@ class SendEmailAction
 {
     public function execute($request)
     {
-        SendEmail::dispatch($request->all())
-            ->onQueue('email');
-
         $response = $this->saveEmailData($request);
+
+        $request['id'] = $response->id;
+
+        dispatch(new SendEmail($request->all()));
 
         return $response;
     }
@@ -23,8 +24,8 @@ class SendEmailAction
             'to' => $request['to'],
             'subject' => $request['subject'],
             'text' => $request['message']['text'],
-            'html' => $request['message']['html'],
-            'markdown' => $request['message']['markdown'],
+            'html' => $request['message']['html'] ?? null,
+            'markdown' => $request['message']['markdown'] ?? null,
         ]);
     }
 }

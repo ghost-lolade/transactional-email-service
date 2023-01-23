@@ -10,6 +10,7 @@
         "laravel/framework": "^9.19",
         "laravel/sanctum": "^3.0",
         "laravel/tinker": "^2.7",
+        "mailjet/laravel-mailjet": "^3.0",
         "mailjet/mailjet-apiv3-php": "^1.5",
         "sendgrid/sendgrid": "^8.0"
     },

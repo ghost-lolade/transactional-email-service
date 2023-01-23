@@ -3,12 +3,20 @@
 namespace App\Interfaces\EmailInterfaces;
 
 use Exception;
-use SendGrid as SendGridService;
+use SendGrid as SendGrid;
 use SendGrid\Mail\Mail as SendGridMail;
+use SendGrid\Client;
 use App\Interfaces\EmailInterfaces\Email;
 
-class SendGrid implements Email
+class SendGridService implements Email
 {
+    /**
+     * Send mail using Sendgrid service
+     * @param array $data
+     *
+     * @return void
+     * @throws Exception
+    */
     public function send($data)
     {
         $email = new SendGridMail();
@@ -17,7 +25,7 @@ class SendGrid implements Email
         $email->addTo($data['to']);
         $email->addContent("text/plain", $data['message']['text']);
         $email->addContent("text/html", $data['message']['html']);
-        $sendgrid = new SendGridService(env('SENDGRID_API_KEY'));
+        $sendgrid = new SendGrid(config('services.sendgrid.key'));
 
         try {
             $sendgrid->send($email);

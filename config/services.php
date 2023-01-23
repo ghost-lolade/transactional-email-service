@@ -21,6 +21,14 @@ return [
         'scheme' => 'https',
     ],
 
+    'mailjet' => [
+        'key' => env('MJ_APIKEY_PUBLIC'),
+        'secret' => env('MJ_APIKEY_PRIVATE'),
+    ],
+    'sendgrid' => [
+        'key' => env('SENDGRID_API_KEY')
+    ],
+
     'postmark' => [
         'token' => env('POSTMARK_TOKEN'),
     ],

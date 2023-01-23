@@ -2,13 +2,15 @@
 
 namespace App\Jobs;
 
+use App\Models\SentEmail;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use SebastianBergmann\Type\VoidType;
+use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Log;
 
 class SendEmail implements ShouldQueue
 {
@@ -19,6 +21,7 @@ class SendEmail implements ShouldQueue
 
     protected $data;
     protected $service;
+    protected $fallbacks;
     /**
      * Create a new job instance.
      *
@@ -28,6 +31,7 @@ class SendEmail implements ShouldQueue
     {
         $this->service = config('mail.service');
         $this->data = $data;
+        $this->fallbacks = config('mail.fallbacks');
     }
 
     /**
@@ -37,11 +41,30 @@ class SendEmail implements ShouldQueue
      */
     public function handle(): void
     {
-        $this->service->send($this->data);
+        (new $this->service)->send($this->data);
+            // SentEmail::where('id', $this->data['id'])->update(['service'  => $this->service]);
+            Log::info("Sending mail to". $this->data['id'] .  "using" . $this->service);
     }
+
+    // private function sendUsingFallback()
+    // {
+    //     $usedService = [];
+    //     foreach ($this->fallbacks as $fallback) {
+    //         if(!in_array($fallback, $usedService)) {
+    //             array_push($usedService, $fallback);
+    //             return $fallback;
+    //         }
+    //     }
+    // }
 
     public function failed()
     {
-        dd('I am heere');
+        $fallback = Arr::random($this->fallbacks);
+
+        Log::info($this->service ."Failed, Sending with fallback mail service:" . $fallback);
+
+        config(['mail.service' => $fallback ]);
+
+        self::dispatch($this->data);
     }
 }

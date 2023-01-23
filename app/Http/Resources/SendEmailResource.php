@@ -10,7 +10,7 @@ class SendEmailResource extends JsonResource
      * Transform the resource into an array.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return array|\Illuminate\Contracts\Support\Arrayable|\JsonSerializable
+     * @return array
      */
     public function toArray($request): array
     {
@@ -18,9 +18,9 @@ class SendEmailResource extends JsonResource
             'to' => $this->to,
             'subject' => $this->subject,
             'service' => $this->service,
-            'html' => $this->message->html,
-            'text' => $this->message->text,
-            'markdown' => $this->message->markdown,
+            'html' => $this->html,
+            'text' => $this->text,
+            'markdown' => $this->markdown,
         ];
     }
 }
