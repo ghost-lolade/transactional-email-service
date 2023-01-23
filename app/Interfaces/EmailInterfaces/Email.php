@@ -10,5 +10,7 @@ interface Email
      *
      * @return void
     */
-    public function send($data);
+    public function send(array $data);
+
+    public function updateSentEmailTable($id);
 }
