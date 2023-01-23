@@ -30,6 +30,7 @@ class SendGridService implements Email
 
         try {
             $sendgrid->send($email);
+
             $this->updateSentEmailTable($data['id']);
         } catch (Exception $e) {
             throw $e;
