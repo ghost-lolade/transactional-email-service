@@ -3,6 +3,7 @@
 namespace App\Jobs;
 
 use App\Models\SentEmail;
+use Exception;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -43,7 +44,7 @@ class SendEmail implements ShouldQueue
     {
         (new $this->service)->send($this->data);
 
-        log_activity(null, "Sending mail to" . $this->data['id'] . "using" . $this->service, $this->data);
+        log_activity(null, "Sending mail to " . $this->data['to'] . " using" . $this->service, $this->data);
 
     }
 
@@ -51,10 +52,11 @@ class SendEmail implements ShouldQueue
     {
         $fallback = Arr::random($this->fallbacks);
 
-        Log::error($this->service ."Failed, Sending with fallback mail service:" . $fallback);
+        log_activity(500, $this->service ."Failed, Sending with fallback mail service:" . $fallback, $this->data);
 
         config(['mail.service' => $fallback ]);
 
         self::dispatch($this->data);
     }
+
 }

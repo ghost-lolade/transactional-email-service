@@ -20,7 +20,7 @@ class MailJetService implements Email
      * @return void
      * @throws Exception
     */
-    public function send(array $data)
+    public function send(array $data): void
     {
         $mailJet = new Client(config('services.mailjet.key'), config('services.mailjet.secret'), true);
 

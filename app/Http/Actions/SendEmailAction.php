@@ -11,7 +11,7 @@ class SendEmailAction
     {
         $response = $this->saveEmailData($request);
 
-        log_activity(201, "email data has been saved to database", $response);
+        log_activity(201, "email data has been saved to database", $response->toArray());
 
         $request['id'] = $response->id;
 

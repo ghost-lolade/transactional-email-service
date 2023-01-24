@@ -18,7 +18,7 @@ class SendGridService implements Email
      * @return void
      * @throws Exception
     */
-    public function send($data)
+    public function send($data): void
     {
         $email = new SendGridMail();
         $email->setFrom(config('mail.from.address'), config('mail.from.name'));

@@ -93,6 +93,9 @@
                 }
             },
             "autoload": {
+                "files": [
+                    "app/Supports/helpers.php"
+                ],
                 "psr-4": {
                     "Dflydev\\DotAccessData\\": "src/"
                 }
