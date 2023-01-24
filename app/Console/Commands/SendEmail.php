@@ -56,7 +56,7 @@ class SendEmail extends Command
 
         if($response->status == false){
 
-            log_error(500, "something went wrong");
+            log_activity(500, "something went wrong", $response);
 
             $this->info('Something went wrong, Don\'t worry i\'ts not your fault');
 
