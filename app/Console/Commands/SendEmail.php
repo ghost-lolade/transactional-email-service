@@ -52,8 +52,15 @@ class SendEmail extends Command
 
         $response = (new SendEmailAction)->execute($data);
 
+        log_activity(null, "email data added to queue", $data);
+
         if($response->status == false){
+
+            log_error(500, "something went wrong");
+
             $this->info('Something went wrong, Don\'t worry i\'ts not your fault');
+
+            return Command::FAILURE;
         }
 
         $this->info("Email has been sent to ${to}");

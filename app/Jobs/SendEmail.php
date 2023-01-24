@@ -43,7 +43,7 @@ class SendEmail implements ShouldQueue
     {
         (new $this->service)->send($this->data);
 
-        Log::info("Sending mail to". $this->data['id'] .  "using" . $this->service);
+        log_activity(null, "Sending mail to" . $this->data['id'] . "using" . $this->service, $this->data);
 
     }
 
@@ -51,7 +51,7 @@ class SendEmail implements ShouldQueue
     {
         $fallback = Arr::random($this->fallbacks);
 
-        Log::info($this->service ."Failed, Sending with fallback mail service:" . $fallback);
+        Log::error($this->service ."Failed, Sending with fallback mail service:" . $fallback);
 
         config(['mail.service' => $fallback ]);
 

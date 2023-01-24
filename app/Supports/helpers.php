@@ -20,7 +20,7 @@ if (! function_exists('log_error')) {
     function log_error(int $statusCode, string $message, Exception $exception)
     {
         report($exception);
-        Log::channel('email')->info($message, $exception->getTrace());
+        Log::channel('email')->error($message, $exception->getTrace());
 
         throw new HttpException($statusCode, $message);
     }
