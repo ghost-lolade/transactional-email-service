@@ -29,16 +29,57 @@ class SendGridService implements Email
         $sendgrid = new SendGrid(config('services.sendgrid.key'));
 
         try {
-            $sendgrid->send($email);
+
+            $response = $sendgrid->send($email);
+
+            $this->logActivity($response->statusCode, "The mail was sent using ".self::class, $data);
 
             $this->updateSentEmailTable($data['id']);
-        } catch (Exception $e) {
+
+            $this->logActivity(200, "The sent email table was updated successfully");
+
+        } catch(Exception $e) {
+
+            $this->logError($e->getCode(), $e->getMessage(), $e);
+
             throw $e;
         }
     }
 
+    /**
+     * Update sent email table service column
+     * @param int $id
+     *
+     * @return void
+    */
     public function updateSentEmailTable($id): void
     {
         SentEmail::where('id', $id)->update(['service'  => self::class]);
+    }
+
+    /**
+     * Logs email activity
+     * @param int $statusCode
+     * @param string $message
+     * @param array $data
+     *
+     * @return void
+    */
+    public function logActivity(int $statusCode = null, string $message, $data = []): void
+    {
+        log_activity($statusCode, $message, $data);
+    }
+
+    /**
+     * Logs email errors
+     * @param int $statusCode
+     * @param string $message
+     * @param Exception $exception
+     *
+     * @return void
+    */
+    public function logError(int $statusCode, string $message, Exception $exception): void
+    {
+        log_error($statusCode, $message, $exception);
     }
 }
