@@ -100,5 +100,4 @@ class SendEmailTest extends TestCase
                 ]
             ];
     }
-    // The PUT method is not supported for route api/api/send-email
 }
