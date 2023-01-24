@@ -20,6 +20,7 @@ if (! function_exists('log_error')) {
     function log_error(int $statusCode, string $message, Exception $exception)
     {
         report($exception);
+        Log::info($message, $exception->getTrace());
 
         throw new HttpException($statusCode, $message);
     }
