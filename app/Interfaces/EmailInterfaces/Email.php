@@ -2,6 +2,8 @@
 
 namespace App\Interfaces\EmailInterfaces;
 
+use Exception;
+
 interface Email
 {
     /**
@@ -10,7 +12,17 @@ interface Email
      *
      * @return void
     */
-    public function send(array $data);
+    public function send(array $data): void;
 
-    public function updateSentEmailTable($id);
+    /**
+     * Send mail using External service
+     * @param int $id
+     *
+     * @return void
+    */
+    public function updateSentEmailTable(int $id): void;
+
+    public function logActivity(int $statusCode = null, string $message, $data = []): void;
+
+    public function logError(int $statusCode, string $message, Exception $exception): void;
 }
