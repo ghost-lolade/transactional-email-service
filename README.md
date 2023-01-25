@@ -72,7 +72,7 @@ These functions logs to a separate log file email.log
 git clone https://https://github.com/ghost-lolade/transactional-email-service.git
 composer install
 cp .env.example .env
-npm install
+Update.env DB_HOST=127.0.0.1
 php artisan migrate
 ```
 
