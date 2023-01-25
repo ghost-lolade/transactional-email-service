@@ -15,6 +15,6 @@ use App\Http\Controllers\EmailController;
 |
 */
 
-Route::group(['prefix' => 'api',], function () {
+Route::group(['prefix' => 'v1',], function () {
     Route::post('/send-email', [EmailController::class, 'sendEmail'])->name('email.send');
 });
