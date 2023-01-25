@@ -1,66 +1,172 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Transactional email microservice
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+This application send transactional email as a stand-alone microservice. It sends email through two method:
 
-## About Laravel
+    -  (JSON) API and Command Line Interface
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+The service uses externlal email services, it uses multiple services, using one as defaul and others as fallback.
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+The two service used in this app are:
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+* MailJet
+* SendGrid
 
-## Learning Laravel
+More can be added as fallback in the future. Refer to [How to add more mail services as fallback](#adding-fallback-email-services)
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+This application has a single endpoint, which is:
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+- Post request to send an email: ``[base_url]/api/v1/send-email``
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains over 2000 video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+**Note: The app has the flexibility to accept more than one fallback service.**
 
-## Laravel Sponsors
+## Architechture of the microservice
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the Laravel [Patreon page](https://patreon.com/taylorotwell).
+The microservice follows standard coding methods. Concerns were separated properly and accordingly.
 
-### Premium Partners
+The endpoint accepts a json request payload which calls the `index` function of the `EmailController` class.
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Cubet Techno Labs](https://cubettech.com)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[Many](https://www.many.co.uk)**
-- **[Webdock, Fast VPS Hosting](https://www.webdock.io/en)**
-- **[DevSquad](https://devsquad.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[OP.GG](https://op.gg)**
-- **[WebReinvent](https://webreinvent.com/?utm_source=laravel&utm_medium=github&utm_campaign=patreon-sponsors)**
-- **[Lendio](https://lendio.com)**
+The paylooad is validated through a request class `SendEmailRequest`. This class takes care of the request validation and returns descriptive error messages accordingly. An action class ` SendEmailAction` is injected into the  `index` function to perform the action of dispatching the job.
 
-## Contributing
+The action class saves the request data in `sent_emails` table and dispatches the job class `SendEmailJob`.
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+The job class uses the default service to send the mail and uses the fallbacks randomly if any failure occurs. The values are saved in the `mail.php` file
 
-## Code of Conduct
+```php
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+    /*
+     * Default email service provider
+     */
+    'service' => "App\Interfaces\EmailInterfaces\MailJetService",
 
-## Security Vulnerabilities
+    /*
+     * Other fallback email service providers
+     */
+    'fallbacks' => [
+        'App\Interfaces\EmailInterfaces\SendGridService',
+        'App\Interfaces\EmailInterfaces\MailJetService',
+    ],
+```
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+The full class path of the mail services are entered.
 
-## License
+The Email interface defines the methods which all service class must implement.
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+Sending a mail through the CLI reuses the `SendEmailAction` class after the inputs anad arguments must have been validated.
+
+#### Logging
+
+An helper.php file was created which is recognised globally through the application. It houses the functions used for logging details through the app. THe functions are:
+
+1. `log_activity()`
+2. `log_error()`
+
+These functions logs to a sepaarte log file email.log
+
+## Installation Instructions without Docker
+
+- Run following commands:
+
+```shell
+git clone https://https://github.com/ghost-lolade/transactional-email-service.git
+composer install
+cp .env.example .env
+npm install
+php artisan migrate
+```
+
+## Installation Instructions with Docker
+
+Run the following command:
+
+```shell
+git clone https://https://github.com/ghost-lolade/transactional-email-service.git
+docker-compose up --build
+
+```
+
+As a final step, visit http://your_server_ip in the browser
+
+**Note:** Create a user for MySQL
+
+## Adding fallback email services
+
+Adding a fallback service can be done in the following steps:
+
+1. `composer requires --[service-package]`
+2. Create a service file in `app/Interfaces/EmailInterfaces/`
+3. Make sure the service class implements the `app/Interfaces/EmailInterfaces/Email` interface
+4. Enter the full path of the service created in the `fallbacks` array in the `mail.php` file like so:
+   ```php
+   /*
+        * Other fallback email service providers
+        */
+       'fallbacks' => [
+           'App\Interfaces\EmailInterfaces\SendGridService',
+           'App\Interfaces\EmailInterfaces\MailJetService',
+       ],
+   ```
+5. Override the following methods:
+   1. `send()` - This function does the sending of the mail as required by each external service
+   2. `updateSentEmailTable()` - This method update the `service` column of the `sent_emails` table. So we can have a record of thee seervcie that was used to ssend what
+   3. `logActivity()` - This logs actions immediately before and after the mail is sent.
+   4. `logError()` - This method logs error in the catch block if there is an exception.
+
+## API endpoint
+
+**endpoint:** ``[base_url]/api/v1/send/email``
+
+**Headers:** ``Content-Type => application/json``
+
+**Request Type:** ``Post``
+
+**Request Body:**
+
+```json
+{
+	"to": "wahlolade@gmail.com",
+    	"subject": "Test",
+    	"message":
+		{
+           		"text": "Lorem Ipsum",
+        		"html": "<htm></html>",
+	    		"markdown": ""
+            	}
+}
+```
+
+
+**Response**:
+
+```json
+{
+	"status": true,
+	"message": "The message has been sent successfuly",
+	"data": {
+		"to": "wahlolade@gmail.com",
+    		"subject": "Test",
+		"text": "Lorem Ipsum",
+        	"html": "<htm></html>",
+	    	"markdown": "",
+		"service": ""
+	}
+}
+```
+
+## Send an email through CLI
+
+```shell
+ php artisan send:mail -to email> -subject <string> -text <text>
+```
+
+## Tests
+
+```shell
+docker exec <container-name> php artisan test --filter SendEmailApiTest
+docker exec <container-name> php artisan test --filter SendEmailCliTest
+```
+
+## Other things that could be added
+
+* Make Redis handle the queue
+* Create an API gateway  for proper microservice communication
+*
