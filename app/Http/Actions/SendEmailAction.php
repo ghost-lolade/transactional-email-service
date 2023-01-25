@@ -13,7 +13,7 @@ class SendEmailAction
 
         log_activity(201, "email data has been saved to database", $response->toArray());
 
-        $request['id'] = $response->id;
+        $request['id'] = $response['id'];
 
         dispatch(new SendEmail($request));
 
