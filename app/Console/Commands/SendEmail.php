@@ -21,7 +21,7 @@ class SendEmail extends Command
      *
      * @var string
      */
-    protected $description = 'Command description';
+    protected $description = 'Send email through CLI';
 
     /**
      * Execute the console command.
@@ -30,23 +30,15 @@ class SendEmail extends Command
      */
     public function handle()
     {
-        $to = $this->ask('Provide the recipient\'s email?');
-        $subject = $this->ask('Provide the email subject?');
-        $text = $this->ask('Provide message in text format?');
-        $html = $this->ask('Provide message in html format?');
-        $markdown = $this->ask('Provide message in markdown format?');
+        $data = $this->getInputs();
 
-        $data = [
-            'to' => $to,
-            'subject' => $subject,
-            'message' => [
-                'text' => $text,
-                'html' => $html,
-                'markdown' => $markdown
-            ]
-        ];
+        $validated = $this->validateInputs($data);
 
-        $validatedData = $this->validateInputs($data);
+        if(count($validated->errors()) > 0){
+            $this->info('Something is wrong with your inputs');
+
+            return Command::FAILURE;
+        }
 
         $this->info('Email will be added to queue');
 
@@ -54,7 +46,7 @@ class SendEmail extends Command
 
         log_activity(null, "email data added to queue", $data);
 
-        if($response->status == false){
+        if(is_null($response)){
 
             log_activity(500, "something went wrong", $response);
 
@@ -63,31 +55,47 @@ class SendEmail extends Command
             return Command::FAILURE;
         }
 
-        $this->info("Email has been sent to ${to}");
+        $this->info("Email has been sent to {$data['to']}");
 
         return Command::SUCCESS;
     }
 
-    private function validateInputs(array $data):bool
+    private function validateInputs(array $data)
     {
         $validated = Validator::make([
             'to' => $data['to'],
             'subject' => $data['subject'],
-            'html' => $data['message']['html'],
             'text' => $data['message']['text'],
+            'html' => $data['message']['html'],
             'markdown' => $data['message']['markdown'],
         ], [
             'to' => ['required', 'email'],
             'subject' => ['required','string'],
-            'message.html' => ['required', 'string'],
-            'message.text' => ['required', 'string'],
-            'message.markdown' => ['required', 'string']
+            'text' => ['required', 'string'],
+            'html' => 'string',
+            'markdown' => ['string']
         ]);
 
-        if ($validated->fails()) {
-            return false;
-        }
-        return true;
+        return $validated;
+    }
+
+    private function getInputs(): array
+    {
+        $to = $this->ask('Provide the recipient\'s email');
+        $subject = $this->ask('Provide the subject of the mail');
+        $text = $this->ask('Provide message in text format');
+        $html = $this->ask('Provide message in html format');
+        $markdown = $this->ask('Provide message in markdown format');
+
+        return [
+            'to' => $to,
+            'subject' => $subject,
+            'message' => [
+                'text' => $text,
+                'html' => $html,
+                'markdown' => $markdown
+            ]
+        ];
     }
 
 }
